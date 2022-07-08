@@ -2,6 +2,14 @@
 
 `qr` is a library for generating QR Codes in pure Go.
 
+```
+go get github.com/AlexEidt/qr
+```
+
+<p align="center">
+  <img width="50%" src="https://github.com/AlexEidt/docs/blob/master/qr/qr.gif">
+</p>
+
 ## Usage
 
 ```go

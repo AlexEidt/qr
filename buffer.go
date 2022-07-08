@@ -41,7 +41,7 @@ func (b *Buffer) Bytes() []byte {
 		data[i/8] = byte(bits)
 	}
 	bits, _ := strconv.ParseUint(s[i:], 2, 64)
-	data[i/8] = byte(bits) // byte(bits << (8 - (len(s) - i)))
+	data[i/8] = byte(bits)
 
 	return data
 }
@@ -51,6 +51,11 @@ func (b *Buffer) Add(val int, size int) {
 		b.buffer.WriteString(fmt.Sprintf("%0*b", size, val))
 		b.size += size
 	}
+}
+
+func (b *Buffer) Write(data string) {
+	b.buffer.WriteString(data)
+	b.size += len(data)
 }
 
 func (b *Buffer) Clear() {

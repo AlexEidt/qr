@@ -38,6 +38,10 @@ func (qr *QRCode) ErrorLevel() string {
 	return qr.errorLevel
 }
 
+func (qr *QRCode) Bitmap() *Bitmap {
+	return qr.qr.Copy()
+}
+
 func NewQRCode(data string, options *Options) (*QRCode, error) {
 	qr := &QRCode{}
 	qr.errorLevel = "L"
@@ -168,6 +172,11 @@ func NewQRCode(data string, options *Options) (*QRCode, error) {
 	qr.addFormatInformation(mask)
 
 	qr.placeBits(qr.qr, bitstring, mask)
+
+	// Add Quiet Zone around the QR Code.
+	qrcode := NewBitmap(qr.size+8, qr.size+8)
+	qrcode.Place(4, 4, qr.qr)
+	qr.qr = qrcode
 
 	return qr, nil
 }
@@ -393,16 +402,16 @@ func (qr *QRCode) findBestMaskPattern(bitstream string) int {
 	return bestMask
 }
 
-func (qr *QRCode) scoreMaskPattern(template *Bitmap) int {
-	// Error #1
-	// Five consecutive modules of the same color.
+func (qr *QRCode) scoreMaskPattern(bitmap *Bitmap) int {
 	score := 0
 
-	prev := template.Get(0, 0)
+	// Error #1
+	// Five consecutive modules of the same color.
+	prev := bitmap.Get(0, 0)
 	for y := 0; y < qr.size; y++ {
 		count := 0
 		for x := 0; x < qr.size; x++ {
-			curr := template.Get(x, y)
+			curr := bitmap.Get(x, y)
 
 			if curr == prev {
 				count++
@@ -418,11 +427,11 @@ func (qr *QRCode) scoreMaskPattern(template *Bitmap) int {
 			score += (count - 5) + 3
 		}
 	}
-	prev = template.Get(0, 0)
+	prev = bitmap.Get(0, 0)
 	for y := 0; y < qr.size; y++ {
 		count := 0
 		for x := 0; x < qr.size; x++ {
-			curr := template.Get(y, x)
+			curr := bitmap.Get(y, x)
 
 			if curr == prev {
 				count++
@@ -443,8 +452,8 @@ func (qr *QRCode) scoreMaskPattern(template *Bitmap) int {
 	// 2x2 blocks of the same color.
 	for y := 0; y < qr.size-1; y++ {
 		for x := 0; x < qr.size-1; x++ {
-			curr := template.Get(x, y)
-			if curr == template.Get(x-1, y) && curr == template.Get(x+1, y) && curr == template.Get(x+1, y+1) {
+			curr := bitmap.Get(x, y)
+			if curr == bitmap.Get(x-1, y) && curr == bitmap.Get(x+1, y) && curr == bitmap.Get(x+1, y+1) {
 				score += 3 // Each 2x2 square adds 3 to the score.
 			}
 		}
@@ -459,11 +468,11 @@ func (qr *QRCode) scoreMaskPattern(template *Bitmap) int {
 			checkCols := 0
 			for i := 0; i < 7; i++ {
 				// Check along rows.
-				if template.Get(x+i, y) == (pattern&(1<<i) != 0) {
+				if bitmap.Get(x+i, y) == (pattern&(1<<i) != 0) {
 					checkRows++
 				}
 				// Check along columns.
-				if template.Get(x, y+i) == (pattern&(1<<i) != 0) {
+				if bitmap.Get(x, y+i) == (pattern&(1<<i) != 0) {
 					checkCols++
 				}
 			}
@@ -481,7 +490,7 @@ func (qr *QRCode) scoreMaskPattern(template *Bitmap) int {
 	darkCount := 0
 	for y := 0; y < qr.size; y++ {
 		for x := 0; x < qr.size; x++ {
-			if template.Get(x, y) {
+			if bitmap.Get(x, y) {
 				darkCount++
 			}
 		}
