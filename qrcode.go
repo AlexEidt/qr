@@ -44,12 +44,12 @@ func (qr *QRCode) Bitmap() *Bitmap {
 
 func NewQRCode(data string, options *Options) (*QRCode, error) {
 	qr := &QRCode{}
-	qr.errorLevel = "L"
 
 	if options == nil {
 		options = &Options{}
 	}
 
+	qr.errorLevel = "L"
 	if options.Error != "" {
 		if !strings.Contains("LMQH", options.Error) {
 			return nil, fmt.Errorf("invalid error level: %s", options.Error)

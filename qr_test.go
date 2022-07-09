@@ -12,7 +12,7 @@ func assertEquals(actual, expected interface{}) {
 }
 
 func TestRendering(test *testing.T) {
-	qr, err := NewQRCode("QR Code", nil)
+	qr, err := NewQRCode("QR Code", &Options{Error: "Q"})
 	if err != nil {
 		panic(err)
 	}
