@@ -36,7 +36,7 @@ Render(filename string, scale int) error // .png, .jpg, .svg supported
 
 ## `Options`
 
-When building a QR Code, you may specify certain parameters such as the Version, Mode and Error Correction Level.
+When building a QR Code, certain parameters can be specified such as the Version, Mode and Error Correction Level.
 
 ```go
 type Options struct {
