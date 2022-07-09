@@ -50,7 +50,10 @@ func NewQRCode(data string, options *Options) (*QRCode, error) {
 		options = &Options{}
 	}
 
-	if options.Error != "" && strings.Contains("LMQH", options.Error) {
+	if options.Error != "" {
+		if !strings.Contains("LMQH", options.Error) {
+			return nil, fmt.Errorf("invalid error level: %s", options.Error)
+		}
 		qr.errorLevel = options.Error
 	}
 
