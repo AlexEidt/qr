@@ -49,7 +49,7 @@ func findOptimalVersion(data string, mode, errorIndex int) int {
 		}
 	}
 
-	return -1
+	return 41
 }
 
 func findMode(data string) int {

@@ -24,7 +24,7 @@ func (qr *QRCode) Render(filename string, scale int) error {
 func (qr *QRCode) renderVector(filename string, scale int) error {
 	writer := NewBuffer()
 
-	template := `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="%d" height="%d">`
+	template := `<svg version="1.1" encoding="UTF-8" xmlns="http://www.w3.org/2000/svg" width="%d" height="%d">`
 	writer.Write(fmt.Sprintf(template, qr.qr.Width()*scale, qr.qr.Height()*scale))
 
 	writer.Write(`<rect width="100%" height="100%" fill="white" />`)

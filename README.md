@@ -22,6 +22,18 @@ if err != nil {
 qrcode.Render("qr.png", 10)
 ```
 
+Below are the functions available for a `QRCode`.
+
+```go
+qr.NewQRCode(data string, options *Options) (*QRCode, error)
+
+Version() int
+Mode() int 									// 1: numeric, 2: alphanumeric, 3: byte
+ErrorLevel() string							// L, M, Q, H
+Bitmap() *Bitmap
+Render(filename string, scale int) error 	// .png, .jpg, .svg supported
+```
+
 ## `Options`
 
 When building a QR Code, you may specify certain parameters such as the Version, Mode and Error Correction Level.

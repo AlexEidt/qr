@@ -72,11 +72,11 @@ func NewQRCode(data string, options *Options) (*QRCode, error) {
 	}
 
 	optimal := findOptimalVersion(data, qr.mode, strings.Index("LMQH", qr.errorLevel))
+	if optimal > 40 {
+		return nil, fmt.Errorf("data too large for a QR Code")
+	}
 	if qr.version == 0 {
 		qr.version = optimal
-		if qr.version == -1 {
-			return nil, fmt.Errorf("data too large for a QR Code")
-		}
 	} else {
 		if qr.version < 1 || qr.version > 40 {
 			return nil, fmt.Errorf("invalid version number. Must be between 1 and 40")

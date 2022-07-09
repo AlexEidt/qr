@@ -12,12 +12,21 @@ func assertEquals(actual, expected interface{}) {
 }
 
 func TestRendering(test *testing.T) {
-	qr, err := NewQRCode("QR Codeerfdsklcfd;k", &Options{Version: 33, Error: "H", Mode: Byte})
+	qr, err := NewQRCode("QR Code Test 123", &Options{Error: "H", Mode: Byte})
 	if err != nil {
 		panic(err)
 	}
+	qr.Render("qr.svg", 10)
 
-	qr.Render("qr.png", 10)
+	// for i := 1; i <= 40; i++ {
+	// 	qr, err := NewQRCode(fmt.Sprintf("Version %d!", i), &Options{Version: i, Error: "L"})
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+
+	// 	qr.Render(fmt.Sprintf("qr%d.png", i), i)
+	// }
+
 }
 
 func TestGivenMode(t *testing.T) {
