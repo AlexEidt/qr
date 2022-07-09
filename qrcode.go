@@ -426,38 +426,38 @@ func (qr *QRCode) scoreMaskPattern(bitmap *Bitmap) int {
 	prev := bitmap.Get(0, 0)
 	for y := 0; y < qr.size; y++ {
 		count := 0
-		for x := 0; x < qr.size; x++ {
+		for x := 1; x < qr.size; x++ {
+			count = 1
 			curr := bitmap.Get(x, y)
-
-			if curr == prev {
+			for prev == curr && x < qr.size-1 {
+				x++
 				count++
-			} else {
-				if count >= 5 {
-					score += (count - 5) + 3
-				}
-				count = 1
-				prev = curr
+				curr = bitmap.Get(x, y)
 			}
+			if count >= 5 {
+				score += (count - 5) + 3
+			}
+			prev = curr
 		}
 		if count >= 5 {
 			score += (count - 5) + 3
 		}
 	}
 	prev = bitmap.Get(0, 0)
-	for y := 0; y < qr.size; y++ {
+	for x := 0; x < qr.size; x++ {
 		count := 0
-		for x := 0; x < qr.size; x++ {
-			curr := bitmap.Get(y, x)
-
-			if curr == prev {
+		for y := 1; y < qr.size; y++ {
+			count = 1
+			curr := bitmap.Get(x, y)
+			for prev == curr && y < qr.size-1 {
+				y++
 				count++
-			} else {
-				if count >= 5 {
-					score += (count - 5) + 3
-				}
-				count = 1
-				prev = curr
+				curr = bitmap.Get(x, y)
 			}
+			if count >= 5 {
+				score += (count - 5) + 3
+			}
+			prev = curr
 		}
 		if count >= 5 {
 			score += (count - 5) + 3
