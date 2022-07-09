@@ -114,6 +114,14 @@ func NewQRCode(data string, options *Options) (*QRCode, error) {
 		}
 	}
 
+	// "blockData" is either a 3-tuple or a 6-tuple.
+	// First value represents number of error correction blocks.
+	// Second value represents the total number of codewords.
+	// Third value represents the number of data codewords.
+	// If "blockData" is a 6-tuple, the next three values represent the
+	// same information as the first three values.
+	// This means that if there is a 6-tuple, there are multiple error correction
+	// blocks with different sizes.
 	blockData := blocks[index]
 
 	dbSize := blockData[0]
@@ -124,6 +132,9 @@ func NewQRCode(data string, options *Options) (*QRCode, error) {
 	bytes := buffer.Bytes()
 
 	dataBlocks := make([][]byte, dbSize)
+	// After the data has been encoded into a stream of bytes, the stream must
+	// be split into the correct number of blocks as determined by the number
+	// of error correction blocks given by "blockData".
 	current := 0
 	for i := 0; i < dbSize; i++ {
 		if i < blockData[0] {
@@ -146,6 +157,10 @@ func NewQRCode(data string, options *Options) (*QRCode, error) {
 		largestBlock = max(largestBlock, blockData[5])
 	}
 	errorwords := blockData[1] - blockData[2]
+	// Interleave data blocks:
+	// Codeword #1 from block #1, codeword #1 from block #2, ..., codeword #1 from block #n
+	// followed by codeword #2 from block #1, codeword #2 from block #2, ..., codeword #2 from block #n
+	// ...
 	for i := 0; i < largestBlock+errorwords; i++ {
 		for _, block := range dataBlocks {
 			if i < len(block) {
@@ -153,6 +168,7 @@ func NewQRCode(data string, options *Options) (*QRCode, error) {
 			}
 		}
 	}
+	// Interleave error blocks in the same way as data blocks.
 	for i := 0; i < errorwords; i++ {
 		for _, block := range errorBlocks {
 			buffer.Add(int(block[i]), 8)
