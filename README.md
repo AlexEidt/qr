@@ -13,8 +13,7 @@ go get github.com/AlexEidt/qr
 ## Usage
 
 ```go
-text := "QR Code"
-qrcode, err := qr.NewQRCode(text, &qr.Options{Error: "H"})
+qrcode, err := qr.NewQRCode("QR Code", &qr.Options{Error: "H"})
 if err != nil {
     panic(err)
 }
