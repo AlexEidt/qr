@@ -12,10 +12,11 @@ func assertEquals(actual, expected interface{}) {
 }
 
 func TestRendering(test *testing.T) {
-	qr, err := NewQRCode("QR Code", &Options{Version: 31, Error: "H"})
+	qr, err := NewQRCode("QR Code", &Options{Error: "H"})
 	if err != nil {
 		panic(err)
 	}
+
 	qr.Render("qr.png", 10)
 }
 
@@ -47,7 +48,7 @@ func TestErrorLevels(t *testing.T) {
 }
 
 func TestNumericMode(t *testing.T) {
-	qr, err := NewQRCode("01234", nil)
+	qr, err := NewQRCode("0123456789", nil)
 	if err != nil {
 		panic(err)
 	}
@@ -56,7 +57,7 @@ func TestNumericMode(t *testing.T) {
 }
 
 func TestAlphaNumMode(t *testing.T) {
-	qr, err := NewQRCode("HELLO WORLD 12345 :.", nil)
+	qr, err := NewQRCode("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:", nil)
 	if err != nil {
 		panic(err)
 	}
