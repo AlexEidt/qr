@@ -28,10 +28,10 @@ Below are the functions available for a `QRCode`.
 qr.NewQRCode(data string, options *Options) (*QRCode, error)
 
 Version() int
-Mode() int 									// 1: numeric, 2: alphanumeric, 3: byte
-ErrorLevel() string							// L, M, Q, H
+Mode() int // 1: numeric, 2: alphanumeric, 3: byte
+ErrorLevel() string // L, M, Q, H
 Bitmap() *Bitmap
-Render(filename string, scale int) error 	// .png, .jpg, .svg supported
+Render(filename string, scale int) error // .png, .jpg, .svg supported
 ```
 
 ## `Options`
