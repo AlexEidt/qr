@@ -30,7 +30,6 @@ func abs(a int) int {
 func findOptimalVersion(data string, mode, errorIndex int) int {
 	buffer := NewBuffer()
 	encode(buffer, data, mode)
-	encoded := buffer.String()
 
 	for version := 1; version <= 40; version++ {
 		index := (version-1)*4 + errorIndex
@@ -40,7 +39,7 @@ func findOptimalVersion(data string, mode, errorIndex int) int {
 			maxbytes += blockData[3] * blockData[5]
 		}
 
-		size := 4 + length(version, mode) + len(encoded)
+		size := 4 + length(version, mode) + buffer.Size()
 		size += max(min(4, capacity[index]-size), 0)
 		size += (8 - size%8) % 8
 
