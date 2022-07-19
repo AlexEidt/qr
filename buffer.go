@@ -46,7 +46,7 @@ func (b *Buffer) Bytes() []byte {
 	return data
 }
 
-func (b *Buffer) Add(val int, size int) {
+func (b *Buffer) Add(val, size int) {
 	if size > 0 {
 		b.buffer.WriteString(fmt.Sprintf("%0*b", size, val))
 		b.size += size
