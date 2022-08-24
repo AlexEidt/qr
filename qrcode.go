@@ -377,7 +377,7 @@ func (qr *QRCode) placeBits(bitmap *Bitmap, bitstream string, mask int) {
 
 		for {
 			for i := col; i > col-2; i-- {
-				if qr.mask.Get(i, row) {
+				if qr.mask.At(i, row) {
 					dark := false
 
 					if index < len(bitstream) {
@@ -426,16 +426,16 @@ func (qr *QRCode) scoreMaskPattern(bitmap *Bitmap) int {
 
 	// Error #1
 	// Five consecutive modules of the same color.
-	prev := bitmap.Get(0, 0)
+	prev := bitmap.At(0, 0)
 	for y := 0; y < qr.size; y++ {
 		count := 0
 		for x := 1; x < qr.size; x++ {
 			count = 1
-			curr := bitmap.Get(x, y)
+			curr := bitmap.At(x, y)
 			for prev == curr && x < qr.size-1 {
 				x++
 				count++
-				curr = bitmap.Get(x, y)
+				curr = bitmap.At(x, y)
 			}
 			if count >= 5 {
 				score += (count - 5) + 3
@@ -446,16 +446,16 @@ func (qr *QRCode) scoreMaskPattern(bitmap *Bitmap) int {
 			score += (count - 5) + 3
 		}
 	}
-	prev = bitmap.Get(0, 0)
+	prev = bitmap.At(0, 0)
 	for x := 0; x < qr.size; x++ {
 		count := 0
 		for y := 1; y < qr.size; y++ {
 			count = 1
-			curr := bitmap.Get(x, y)
+			curr := bitmap.At(x, y)
 			for prev == curr && y < qr.size-1 {
 				y++
 				count++
-				curr = bitmap.Get(x, y)
+				curr = bitmap.At(x, y)
 			}
 			if count >= 5 {
 				score += (count - 5) + 3
@@ -471,8 +471,8 @@ func (qr *QRCode) scoreMaskPattern(bitmap *Bitmap) int {
 	// 2x2 blocks of the same color.
 	for y := 0; y < qr.size-1; y++ {
 		for x := 0; x < qr.size-1; x++ {
-			curr := bitmap.Get(x, y)
-			if curr == bitmap.Get(x-1, y) && curr == bitmap.Get(x+1, y) && curr == bitmap.Get(x+1, y+1) {
+			curr := bitmap.At(x, y)
+			if curr == bitmap.At(x-1, y) && curr == bitmap.At(x+1, y) && curr == bitmap.At(x+1, y+1) {
 				score += 3 // Each 2x2 square adds 3 to the score.
 			}
 		}
@@ -487,11 +487,11 @@ func (qr *QRCode) scoreMaskPattern(bitmap *Bitmap) int {
 			checkCols := 0
 			for i := 0; i < 7; i++ {
 				// Check along rows.
-				if bitmap.Get(x+i, y) == (pattern&(1<<i) != 0) {
+				if bitmap.At(x+i, y) == (pattern&(1<<i) != 0) {
 					checkRows++
 				}
 				// Check along columns.
-				if bitmap.Get(x, y+i) == (pattern&(1<<i) != 0) {
+				if bitmap.At(x, y+i) == (pattern&(1<<i) != 0) {
 					checkCols++
 				}
 			}
@@ -509,7 +509,7 @@ func (qr *QRCode) scoreMaskPattern(bitmap *Bitmap) int {
 	darkCount := 0
 	for y := 0; y < qr.size; y++ {
 		for x := 0; x < qr.size; x++ {
-			if bitmap.Get(x, y) {
+			if bitmap.At(x, y) {
 				darkCount++
 			}
 		}

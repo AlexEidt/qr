@@ -31,7 +31,7 @@ func (qr *QRCode) renderVector(filename string, scale int) error {
 
 	for h := 0; h < qr.qr.Height(); h++ {
 		for w := 0; w < qr.qr.Width(); w++ {
-			if qr.qr.Get(w, h) {
+			if qr.qr.At(w, h) {
 				template := `<rect x="%d" y="%d" width="%d" height="%d" fill="#000" />`
 				writer.Write(fmt.Sprintf(template, w*scale, h*scale, scale, scale))
 			}
@@ -69,7 +69,7 @@ func (qr *QRCode) renderRaster(filename string, scale int) error {
 	for h := 0; h < qr.qr.Height(); h++ {
 		for w := 0; w < qr.qr.Width(); w++ {
 			var c color.RGBA
-			if qr.qr.Get(w, h) {
+			if qr.qr.At(w, h) {
 				c = color.RGBA{0, 0, 0, 255}
 			} else {
 				c = color.RGBA{255, 255, 255, 255}

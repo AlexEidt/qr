@@ -35,7 +35,7 @@ func (b *Bitmap) Copy() *Bitmap {
 	return new
 }
 
-func (b *Bitmap) Get(x, y int) bool {
+func (b *Bitmap) At(x, y int) bool {
 	index := y*b.width + x
 	return (b.data[index/64] & (1 << (index & 63))) != 0
 }
@@ -60,7 +60,7 @@ func (b *Bitmap) Fill(x, y, w, h int, value bool) {
 func (b *Bitmap) Place(x, y int, other *Bitmap) {
 	for i := y; i < y+other.Height(); i++ {
 		for j := x; j < x+other.Width(); j++ {
-			b.Set(j, i, other.Get(j-x, i-y))
+			b.Set(j, i, other.At(j-x, i-y))
 		}
 	}
 }

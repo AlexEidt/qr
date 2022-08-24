@@ -24,12 +24,12 @@ qrcode.Render("qr.png", 10)
 Below are the functions available for a `QRCode`.
 
 ```go
-qr.NewQRCode(data string, options *Options) (*QRCode, error)
+qr.NewQRCode(data string, options *qr.Options) (*qr.QRCode, error)
 
 Version() int
 Mode() int // 1: numeric, 2: alphanumeric, 4: byte
 ErrorLevel() string // L, M, Q, H
-Bitmap() *Bitmap
+Bitmap() *qr.Bitmap
 Render(filename string, scale int) error // .png, .jpg, .svg supported
 ```
 
