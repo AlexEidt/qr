@@ -2,6 +2,7 @@ package qr
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -74,7 +75,7 @@ func NewQRCode(data string, options *Options) (*QRCode, error) {
 
 	}
 
-	optimal := findOptimalVersion(data, qr.mode, strings.Index("LMQH", qr.errorLevel))
+	optimal := qr.findOptimalVersion(data)
 	if optimal > 40 {
 		return nil, fmt.Errorf("data too large for a QR Code")
 	}
@@ -97,7 +98,7 @@ func NewQRCode(data string, options *Options) (*QRCode, error) {
 	// Add data. First add the mode indicator, then the data length, followed by the data.
 	buffer.Add(qr.mode, 4)
 	buffer.Add(len(data), length(qr.version, qr.mode))
-	encode(buffer, data, qr.mode)
+	qr.encode(buffer, data)
 
 	index := (qr.version-1)*4 + strings.Index("LMQH", qr.errorLevel)
 
@@ -198,6 +199,78 @@ func NewQRCode(data string, options *Options) (*QRCode, error) {
 	qr.qr = qrcode
 
 	return qr, nil
+}
+
+func (qr *QRCode) findOptimalVersion(data string) int {
+	buffer := NewBuffer()
+	qr.encode(buffer, data)
+
+	errorIndex := strings.Index("LMQH", qr.errorLevel)
+
+	for version := 1; version <= 40; version++ {
+		index := (version-1)*4 + errorIndex
+		blockData := blocks[index]
+		maxbytes := blockData[0] * blockData[2]
+		if len(blockData) > 3 {
+			maxbytes += blockData[3] * blockData[5]
+		}
+
+		size := 4 + length(version, qr.mode) + buffer.Size()
+		size += max(min(4, capacity[index]-size), 0)
+		size += (8 - size%8) % 8
+
+		if size/8 <= maxbytes {
+			return version
+		}
+	}
+
+	return 42 // :D
+}
+
+func (qr *QRCode) encode(buffer *Buffer, data string) {
+	switch qr.mode {
+	case Numeric:
+		for i := 0; i < len(data); i += 3 {
+			// str = data[i:i+3]
+			str := string(data[i])
+			j := i + 1
+			for j < len(data) && j < i+3 {
+				str += string(data[j])
+				j++
+			}
+			var dlen int
+			switch len(str) {
+			case 1:
+				dlen = 4
+			case 2:
+				dlen = 7
+			case 3:
+				dlen = 10
+			}
+			n, _ := strconv.Atoi(str)
+			buffer.Add(n, dlen)
+		}
+	case AlphaNum:
+		chars := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:"
+		for i := 0; i < len(data); i += 2 {
+			// str = data[i:i+2]
+			str := string(data[i])
+			if i+1 < len(data) {
+				str += string(data[i+1])
+			}
+			if len(str) > 1 {
+				val := strings.Index(chars, string(str[0])) * 45
+				val += strings.Index(chars, string(str[1]))
+				buffer.Add(val, 11)
+			} else {
+				buffer.Add(strings.Index(chars, string(str[0])), 6)
+			}
+		}
+	case Byte:
+		for _, b := range []byte(data) {
+			buffer.Add(int(b), 8)
+		}
+	}
 }
 
 func (qr *QRCode) addPositionPatterns() {
