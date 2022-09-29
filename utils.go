@@ -48,7 +48,7 @@ func findOptimalVersion(data string, mode, errorIndex int) int {
 		}
 	}
 
-	return 41
+	return 42 // :D
 }
 
 func findMode(data string) int {
@@ -67,6 +67,7 @@ func encode(buffer *Buffer, data string, mode int) {
 	switch mode {
 	case Numeric:
 		for i := 0; i < len(data); i += 3 {
+			// str = data[i:i+3]
 			str := string(data[i])
 			j := i + 1
 			for j < len(data) && j < i+3 {
@@ -88,6 +89,7 @@ func encode(buffer *Buffer, data string, mode int) {
 	case AlphaNum:
 		chars := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:"
 		for i := 0; i < len(data); i += 2 {
+			// str = data[i:i+2]
 			str := string(data[i])
 			if i+1 < len(data) {
 				str += string(data[i+1])
